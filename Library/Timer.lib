@@ -1,0 +1,58 @@
+#include <mega32.h>
+#include <Timer.h>
+
+unsigned char tflag[TIMER_BIT_SIZE];//Timer Flag Register
+void(*tfunc[TimerN])();// Timer Functions Addresses
+
+unsigned int tj[TimerN];//Job Time
+unsigned int tt[TimerN];//Timer Time
+
+void StartTimer(unsigned char i,unsigned int t, void(*f)() ){
+	tfunc[i]=f;
+	tt[i]=t;
+	tj[i]=0;//i:Timer Number,t:Timer time,f: Function
+} 
+void StartJob(unsigned char i,unsigned int t, void(*f)() ){
+	tfunc[i]=f;
+	tt[i]=t;
+	tj[i]=t;
+} 
+void StopTimer(unsigned char i){
+	tt[i]=0;
+	tj[i]=0;
+}
+
+//Run all timer functions
+void RunTimer(){
+    unsigned char i;
+    for (i=0;i<TimerN;i++){
+        if (READF(i)==1){
+            tfunc[i]();
+            RESETF(i);
+            return;
+        } 
+    }
+}
+
+//Initialize ATmega32 Timer Registers
+void initTimer(){
+    TCCR0=(0<<WGM00) | (0<<COM01) | (0<<COM00) | (0<<WGM01) | (0<<CS02) | (1<<CS01) | (1<<CS00);
+    TCNT0=0x83;
+    OCR0=0x00;
+    TIMSK=TIMSK | (1<<TOIE0); 
+}
+
+interrupt [TIM0_OVF] void timer0_ovf_isr(void)
+{
+    unsigned char i;    
+    TCNT0=0x83; 
+    for (i=0;i<TimerN;i++){
+        if (tt[i]>1){
+            tt[i]--;      
+        }else if(tt[i]==1){
+            tt[i]--;
+            tt[i]=tj[i];
+            SETF(i);
+        }
+    }  
+}

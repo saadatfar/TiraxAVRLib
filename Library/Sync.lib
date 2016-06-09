@@ -1,3 +1,28 @@
+#include <Timer.h>
+#include <Sync.h>
+#include <mega32.h>
+
+void(*intFunc[REG_SIZE])(char); //Interrupt functions variable
+
+unsigned char syReg[REG_SIZE]; //Registers
+unsigned char iFlag[REG_BIT_SIZE]; //Interrupts
+
+//Sync Buffer Variables
+unsigned char syw_wr_index=0,syw_rd_index=0,syw_counter=0;
+bit syw_overflow=0;
+unsigned char syw_buffer[SYW_BUFFER_SIZE];
+
+//TX Buffer Variables
+char tx_buffer[TX_BUFFER_SIZE];
+unsigned char tx_wr_index=0,tx_rd_index=0,tx_counter=0;
+
+unsigned char syw_chk; //Last sent parity byte
+
+//Receiver state machine variables 
+unsigned char read_reg_step=0,read_i;
+unsigned char read_ack_step=0;
+
+
 void pushSyncBuffer(char i){
     #asm("cli")
     syw_buffer[syw_wr_index++]=i;
