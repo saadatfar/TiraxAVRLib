@@ -35,6 +35,8 @@
 #define DS18B20_SEARCH_ROM_CMD 0xf0
 #define DS18B20_ALARM_SEARCH_CMD 0xec
 
+#define ERROR_ON_READ -9999
+
 #pragma used+
 extern struct __ds18b20_scratch_pad_struct
        {
