@@ -1,15 +1,18 @@
+#ifndef _TIRAX_LIB_INCLUDED_
+#define _TIRAX_LIB_INCLUDED_
+
 #include <Timer.h>
 #include <Sync.h>
+#include <stdbool.h>
 
-void initTirax(){
-	// Watchdog Timer initialization: OSC/1024k: 1Sec
-	WDTCR=(0<<WDTOE) | (1<<WDE) | (1<<WDP2) | (1<<WDP1) | (0<<WDP0);
-	initTimer();
-	initSync();
-}
+void initTirax();
+void RunTirax();
 
-void RunTirax(){
-    #asm("wdr");
-	RunTimer();
-	RunInterrupts();
-}
+bool readBitCharArr(char* arr,unsigned int n);
+void setBitCharArr(char* arr,unsigned int n);
+void resetBitCharArr(char* arr,unsigned int n);
+
+
+#pragma library Tirax.lib
+
+#endif

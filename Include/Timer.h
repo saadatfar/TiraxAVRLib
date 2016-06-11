@@ -5,21 +5,22 @@
     #error Timer Framework only works at 8 MHZ      
 #endif
 
-#define TimerN 16
 #define TRANS_RESEND_TIMER 0
 
 #define SETF(i)     tflag[i/8]= tflag[i/8] | (1<<(i%8))
 #define RESETF(i)   tflag[i/8]= tflag[i/8] & (~(1<<(i%8)))
 #define READF(i)    (tflag[i/8]&(1<<(i%8)))>>(i%8)
 
-#define TIMER_BIT_SIZE TimerN/8+(TimerN%8!=0)
 
 void StartTimer(unsigned char i,unsigned int t, void(*f)() );
 void StartJob(unsigned char i,unsigned int t, void(*f)() );
 void StopTimer(unsigned char i);
+unsigned char StartNextTimer(unsigned int t, void(*f)() );
+unsigned char StartNextJob(unsigned int t, void(*f)() );
+unsigned char findFreeTimer();
   
 void RunTimer();
-void initTimer();
+void initTimer(unsigned char size);
 
 #pragma library Timer.lib
 

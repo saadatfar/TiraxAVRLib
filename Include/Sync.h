@@ -1,8 +1,6 @@
 #ifndef _TIRAX_SYNC_INCLUDED_
 #define _TIRAX_SYNC_INCLUDED_
 
-#define REG_SIZE 64
-
 #define RESEND_T 300
 #define SYW_BUFFER_SIZE 32
 #define TX_BUFFER_SIZE 9
@@ -25,8 +23,6 @@
 #define RESETI(i)   iFlag[i/8]= iFlag[i/8] & (~(1<<(i%8))) //MACRO: Reset interrupt flag
 #define READI(i)    (iFlag[i/8]&(1<<(i%8)))>>(i%8) //MACRO: Read interrupt flag 
 
-#define REG_BIT_SIZE REG_SIZE/8+(REG_SIZE%8!=0) //Calculate number of bytes needed to store interrupt flags = ceil(REG_SIZE)
-
 void pushSyncBuffer(char i); //Push i th register into sync buffer
 unsigned char readSyncBuffer(); //Read first in sync buffer
 void pullBuffer(); //Pull (delete) first in sync buffer
@@ -38,7 +34,7 @@ void nop(char x);//Do nothing!
 
 void setInterrupt(char n,void(*f)(char)); //Initiate an interrupt
 
-void initSync(); //Initialize Sync system
+void initSync(char size); //Initialize Sync system
 
 void setReadReg(char n,char data); //Send acknowledge and set interrupt
 

@@ -1,11 +1,15 @@
 #include <Timer.h>
 #include <Sync.h>
+#include <stdlib.h>
 #include <mega32.h>
 
-void(*intFunc[REG_SIZE])(char); //Interrupt functions variable
+unsigned char REG_SIZE; 
+unsigned char REG_BIT_SIZE;
 
-unsigned char syReg[REG_SIZE]; //Registers
-unsigned char iFlag[REG_BIT_SIZE]; //Interrupts
+void(**intFunc)(char); //Interrupt functions variable
+
+unsigned char *syReg; //Registers
+unsigned char *iFlag; //Interrupts
 
 //Sync Buffer Variables
 unsigned char syw_wr_index=0,syw_rd_index=0,syw_counter=0;
@@ -84,8 +88,15 @@ void setInterrupt(char n,void(*f)(char)){
 void nop(char x){}
 #pragma warn+ 
 // Initialize ATmega32 UART register
-void initSync(){
+void initSync(char size){
     char i;
+	REG_SIZE=size;
+	REG_BIT_SIZE=size/8+(size%8!=0);
+	
+	syReg = (unsigned char *) calloc(size,sizeof(unsigned char *));
+	iFlag = (unsigned char *) calloc(REG_BIT_SIZE,sizeof(unsigned char *));
+	intFunc = (void(**)(char)) calloc(REG_BIT_SIZE,sizeof(void(*)(char)));
+	
     UCSRA=(0<<RXC) | (0<<TXC) | (0<<UDRE) | (0<<FE) | (0<<DOR) | (0<<UPE) | (0<<U2X) | (0<<MPCM);
     UCSRB=(1<<RXCIE) | (1<<TXCIE) | (0<<UDRIE) | (1<<RXEN) | (1<<TXEN) | (0<<UCSZ2) | (0<<RXB8) | (0<<TXB8);
     UCSRC=(1<<URSEL) | (0<<UMSEL) | (0<<UPM1) | (0<<UPM0) | (0<<USBS) | (1<<UCSZ1) | (1<<UCSZ0) | (0<<UCPOL);
