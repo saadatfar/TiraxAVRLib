@@ -67,10 +67,10 @@ void RunTimer(){
 void initTimer(unsigned char size){
 	TimerN=size;
 	TimerBitSize=size/8+(size%8!=0);
-	tj = (unsigned int *) calloc(size,sizeof(unsigned int *)); 
-    tt = (unsigned int *) calloc(size,sizeof(unsigned int *));
-	tflag = (char *) calloc(TimerBitSize,sizeof(unsigned char *));
-	treserved = (char *) calloc(TimerBitSize,sizeof(unsigned char *));
+	tj = (unsigned int *) calloc(size,sizeof(unsigned int)); 
+    tt = (unsigned int *) calloc(size,sizeof(unsigned int));
+	tflag = (char *) calloc(TimerBitSize,sizeof(char));
+	treserved = (char *) calloc(TimerBitSize,sizeof(char));
 	tfunc = (void(**)()) calloc(size,sizeof( void(*)() ));
 	
     TCCR0=(0<<WGM00) | (0<<COM01) | (0<<COM00) | (0<<WGM01) | (0<<CS02) | (1<<CS01) | (1<<CS00);

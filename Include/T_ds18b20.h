@@ -48,7 +48,10 @@ extern struct __ds18b20_scratch_pad_struct
                      res3,
                      crc;
        } __ds18b20_scratch_pad;
-
+	   
+void initDS18B20(unsigned char n);   
+unsigned char * getAddr(unsigned char n);
+	   
 unsigned char ds18b20_select(unsigned char *addr);
 unsigned char ds18b20_read_spd(unsigned char *addr);
 float ds18b20_temperature(unsigned char *addr);

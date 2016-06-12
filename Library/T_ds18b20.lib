@@ -7,6 +7,7 @@
 
 #include <delay.h>
 #include <T_ds18b20.h>
+#include <stdlib.h>
 
 struct __ds18b20_scratch_pad_struct __ds18b20_scratch_pad;
 
@@ -14,6 +15,22 @@ struct __ds18b20_scratch_pad_struct __ds18b20_scratch_pad;
 static flash int conv_delay[4]={100,200,400,800};
 // valid temp. bit mask depending on the resolution
 static flash unsigned bit_mask[4]={0xFFF8,0xFFFC,0xFFFE,0xFFFF};
+
+unsigned char *ds18b20_addr;
+
+void initDS18B20(unsigned char n){
+	unsigned char nn,i;
+	eeprom unsigned char* ej;
+	ds18b20_addr = (unsigned char *) calloc(9*n,sizeof(unsigned char));
+	nn=n*9;
+	for (i=0;i<nn;i++){
+		ej=(eeprom unsigned char*) (i);
+		*(ds18b20_addr+i)=*ej;
+	}
+}
+unsigned char * getAddr(unsigned char n){
+	return (unsigned char*) (ds18b20_addr+9*(n-1));
+}
 
 unsigned char ds18b20_select(unsigned char *addr)
 {

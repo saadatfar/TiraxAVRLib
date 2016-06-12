@@ -93,8 +93,8 @@ void initSync(char size){
 	REG_SIZE=size;
 	REG_BIT_SIZE=size/8+(size%8!=0);
 	
-	syReg = (unsigned char *) calloc(size,sizeof(unsigned char *));
-	iFlag = (unsigned char *) calloc(REG_BIT_SIZE,sizeof(unsigned char *));
+	syReg = (unsigned char *) calloc(size,sizeof(unsigned char));
+	iFlag = (unsigned char *) calloc(REG_BIT_SIZE,sizeof(unsigned char));
 	intFunc = (void(**)(char)) calloc(REG_BIT_SIZE,sizeof(void(*)(char)));
 	
     UCSRA=(0<<RXC) | (0<<TXC) | (0<<UDRE) | (0<<FE) | (0<<DOR) | (0<<UPE) | (0<<U2X) | (0<<MPCM);
