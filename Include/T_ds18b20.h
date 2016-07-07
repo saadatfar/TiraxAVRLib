@@ -55,8 +55,8 @@ unsigned char * getAddr(unsigned char n);
 unsigned char ds18b20_select(unsigned char *addr);
 unsigned char ds18b20_read_spd(unsigned char *addr);
 float ds18b20_temperature(unsigned char *addr);
-unsigned char ds18b20_init(unsigned char *addr,signed char temp_low,signed char temp_high,
-unsigned char resolution);
+unsigned char ds18b20Config(unsigned char *addr,signed char temp_low,signed char temp_high,unsigned char resolution);
+unsigned char ds18b20CheckConfigAll(signed char temp_low,signed char temp_high,unsigned char resolution);
 int ds18b20_temperature_phase1(unsigned char n);
 float ds18b20_temperature_phase2(unsigned char n,unsigned char resolution);
 #pragma used-

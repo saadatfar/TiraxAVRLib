@@ -9,6 +9,8 @@
 #include <T_ds18b20.h>
 #include <stdlib.h>
 
+#define MAX_DEVICES 16
+
 struct __ds18b20_scratch_pad_struct __ds18b20_scratch_pad;
 
 // temp. conversion time [ms] depending on the resolution
@@ -77,7 +79,7 @@ float ds18b20_temperature(unsigned char *addr)
 	return (*((int *) &__ds18b20_scratch_pad.temp_lsb) & ((int) bit_mask[resolution]))*0.0625;
 }
 
-unsigned char ds18b20_init(unsigned char *addr,signed char temp_low,signed char temp_high,
+unsigned char ds18b20Config(unsigned char *addr,signed char temp_low,signed char temp_high,
 unsigned char resolution)
 {
 	if (ds18b20_select(addr)==0) return 0;
@@ -96,6 +98,26 @@ unsigned char resolution)
 	return w1_init();
 }
 
+unsigned char ds18b20CheckConfigAll(signed char temp_low,signed char temp_high,
+unsigned char resolution)
+{
+	unsigned char rom_code[MAX_DEVICES][9];
+	unsigned char i,devices;
+	
+	devices=w1_search(0xf0,rom_code);
+	for (i=0;i<devices;i++)
+    {
+		ds18b20_read_spd(&rom_code[i][0]);
+		if ((__ds18b20_scratch_pad.temp_low!=temp_low) ||
+			(__ds18b20_scratch_pad.temp_high!=temp_high) ||
+			(__ds18b20_scratch_pad.conf_register!=resolution))
+		{
+			ds18b20Config(&rom_code[i][0],temp_low,temp_high,resolution);
+		}
+	}
+	
+	return w1_init();
+}
 //**************** USER DEFINED FUNCTION ****************//
 int ds18b20_temperature_phase1(unsigned char n) 
 {
