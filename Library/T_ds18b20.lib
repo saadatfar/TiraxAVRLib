@@ -31,11 +31,13 @@ void initDS18B20(unsigned char n){
 		ej=(eeprom unsigned char*) (i);
 		*(ds18b20_addr+i)=*ej;
 	}
+	ds18b20_ConvertAll();
+	ds18b20_waitForConversion(DS18B20_12BIT_RES);
 }
-unsigned char * getAddr(unsigned char n){
+unsigned char * ds18b20_getAddr(unsigned char n){
 	return (unsigned char*) (ds18b20_addr+9*(n-1));
 }
-unsigned char findNumberByAddr(unsigned char *addr){
+unsigned char ds18b20_findNumberByAddr(unsigned char *addr){
 	unsigned char i,j;
 	for (i=0;i<SensN;i++){
 		for(j=0;j<9;i++){
@@ -115,31 +117,37 @@ unsigned char ds18b20CheckConfigAll(signed char temp_low,signed char temp_high,u
 	unsigned char i;
 	for (i=1;i<=SensN;i++)
     {
-		ds18b20_read_spd(getAddr(i));
+		ds18b20_read_spd(ds18b20_getAddr(i));
 		if ((__ds18b20_scratch_pad.temp_low!=temp_low) ||
 			(__ds18b20_scratch_pad.temp_high!=temp_high) ||
 			(__ds18b20_scratch_pad.conf_register!=resolution))
 		{
-			ds18b20Config(getAddr(i),temp_low,temp_high,resolution);
+			ds18b20Config(ds18b20_getAddr(i),temp_low,temp_high,resolution);
 		}
 	}
 	
 	return w1_init();
 }
-unsigned char checkAlarms(){
+unsigned char ds18b20_checkAlarms(){
 	unsigned char rom_code[ALRAM_MAX_DEVICES][9];
 	unsigned char devices;
-	devices=w1_search(0xf0,rom_code);
+	devices=w1_search(0xec,rom_code);
 	if (devices==0) return 0;
 	else
 	{
-		return findNumberByAddr(&rom_code[0][0]);
+		return ds18b20_findNumberByAddr(&rom_code[0][0]);
 	}
+}
+int ds18b20_ConvertAll(){
+	if (w1_init()==0) return 0;
+	w1_write(0xcc);
+	w1_write(0x44);
+	return 1;
 }
 int ds18b20_temperature_phase1(unsigned char n) 
 {
 	unsigned char *addr;
-	addr = getAddr(n);
+	addr = ds18b20_getAddr(n);
 	if (ds18b20_select(addr)==0) return 0;
 	w1_write(0x44);
 	return 1;
@@ -147,8 +155,11 @@ int ds18b20_temperature_phase1(unsigned char n)
 float ds18b20_temperature_phase2(unsigned char n,unsigned char resolution)
 {
 	unsigned char *addr;
-	addr = getAddr(n);
+	addr = ds18b20_getAddr(n);
 	if (ds18b20_read_spd(addr)==0) return -9999;
 	w1_init();
 	return (*((int *) &__ds18b20_scratch_pad.temp_lsb) & ((int) bit_mask[resolution]))*0.0625;
+}
+void ds18b20_waitForConversion(unsigned char resolution){
+	delay_ms(conv_delay[resolution]);
 }

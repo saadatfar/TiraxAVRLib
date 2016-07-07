@@ -50,8 +50,7 @@ extern struct __ds18b20_scratch_pad_struct
        } __ds18b20_scratch_pad;
 	   
 void initDS18B20(unsigned char n);   
-unsigned char * getAddr(unsigned char n);
-	   
+unsigned char * ds18b20_getAddr(unsigned char n);	   
 unsigned char ds18b20_select(unsigned char *addr);
 unsigned char ds18b20_read_spd(unsigned char *addr);
 float ds18b20_temperature(unsigned char *addr);
@@ -59,8 +58,10 @@ unsigned char ds18b20Config(unsigned char *addr,signed char temp_low,signed char
 unsigned char ds18b20CheckConfigAll(signed char temp_low,signed char temp_high,unsigned char resolution);
 int ds18b20_temperature_phase1(unsigned char n);
 float ds18b20_temperature_phase2(unsigned char n,unsigned char resolution);
-unsigned char findNumberByAddr(unsigned char *addr);
-unsigned char checkAlarms();
+unsigned char ds18b20_findNumberByAddr(unsigned char *addr);
+unsigned char ds18b20_checkAlarms();
+void ds18b20_waitForConversion(unsigned char resolution);
+int ds18b20_ConvertAll();
 #pragma used-
 
 #pragma library T_ds18b20.lib

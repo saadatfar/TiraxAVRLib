@@ -74,16 +74,23 @@ void initTimer(unsigned char size){
 	treserved = (char *) calloc(TimerBitSize,sizeof(char));
 	tfunc = (void(**)()) calloc(size,sizeof( void(*)() ));
 	
-    TCCR0=(0<<WGM00) | (0<<COM01) | (0<<COM00) | (0<<WGM01) | (0<<CS02) | (1<<CS01) | (1<<CS00);
-    TCNT0=0x83;
-    OCR0=0x00;
-    TIMSK=TIMSK | (1<<TOIE0); 
+    // Timer/Counter 2 initialization
+	// Clock source: System Clock
+	// Clock value: 250.000 kHz
+	// Mode: CTC top=OCR2A
+	// OC2 output: Disconnected
+	// Timer Period: 1 ms
+	ASSR=0<<AS2;
+	TCCR2=(0<<PWM2) | (0<<COM21) | (0<<COM20) | (1<<CTC2) | (0<<CS22) | (1<<CS21) | (1<<CS20);
+	TCNT2=0x00;
+	OCR2=0xF9;
+	
+    TIMSK=TIMSK | (1<<TOIE2); 
 }
 
-interrupt [TIM0_OVF] void timer0_ovf_isr(void)
+interrupt [TIM2_OVF] void timer2_ovf_isr(void)
 {
-    unsigned char i;    
-    TCNT0=0x83;
+	unsigned char i;    
     for (i=0;i<TimerN;i++){
         if (tt[i]>1){
             tt[i]--;      
@@ -93,4 +100,5 @@ interrupt [TIM0_OVF] void timer0_ovf_isr(void)
             SETF(i);
         }
     }  
+
 }
