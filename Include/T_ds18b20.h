@@ -59,6 +59,8 @@ unsigned char ds18b20Config(unsigned char *addr,signed char temp_low,signed char
 unsigned char ds18b20CheckConfigAll(signed char temp_low,signed char temp_high,unsigned char resolution);
 int ds18b20_temperature_phase1(unsigned char n);
 float ds18b20_temperature_phase2(unsigned char n,unsigned char resolution);
+unsigned char findNumberByAddr(unsigned char *addr);
+unsigned char checkAlarms();
 #pragma used-
 
 #pragma library T_ds18b20.lib
