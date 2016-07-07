@@ -90,6 +90,7 @@ void nop(char x){}
 // Initialize ATmega32 UART register
 void initSync(char size){
     char i;
+	size++;
 	REG_SIZE=size;
 	REG_BIT_SIZE=size/8+(size%8!=0);
 	

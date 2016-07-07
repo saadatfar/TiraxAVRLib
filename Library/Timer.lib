@@ -65,6 +65,7 @@ void RunTimer(){
 
 //Initialize ATmega32 Timer Registers
 void initTimer(unsigned char size){
+	size++;
 	TimerN=size;
 	TimerBitSize=size/8+(size%8!=0);
 	tj = (unsigned int *) calloc(size,sizeof(unsigned int)); 
