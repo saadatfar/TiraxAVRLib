@@ -34,7 +34,7 @@ void nop(char x);//Do nothing!
 
 void setInterrupt(char n,void(*f)(char)); //Initiate an interrupt
 
-void initSync(char size); //Initialize Sync system
+void initSync(unsigned char size); //Initialize Sync system
 
 void setReadReg(char n,char data); //Send acknowledge and set interrupt
 
@@ -42,11 +42,11 @@ void WriteReg(unsigned char i,unsigned char data);
 
 void RunInterrupts();
 
+char ReadReg(char n);
+
 #define SetBitReg(i,n) syReg[i]=(1<<n) | syReg[i]  ;pushSyncBuffer(i);
 #define ResetBitReg(i,n) syReg[i]=(0<<n) & syReg[i] ;pushSyncBuffer(i);
 #define ReadBitReg(i,n) (syReg[i] & (1<<n))!=0
-#define ReadReg(i) syReg[i]
-
 
 #pragma library Sync.lib
 

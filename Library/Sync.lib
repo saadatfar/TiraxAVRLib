@@ -1,7 +1,7 @@
 #include <Timer.h>
 #include <Sync.h>
 #include <stdlib.h>
-#include <mega32.h>
+#include <mega32a.h>
 
 unsigned char REG_SIZE; 
 unsigned char REG_BIT_SIZE;
@@ -88,7 +88,7 @@ void setInterrupt(char n,void(*f)(char)){
 void nop(char x){}
 #pragma warn+ 
 // Initialize ATmega32 UART register
-void initSync(char size){
+void initSync(unsigned char size){
     char i;
 	size++;
 	REG_SIZE=size;
@@ -98,14 +98,22 @@ void initSync(char size){
 	iFlag = (unsigned char *) calloc(REG_BIT_SIZE,sizeof(unsigned char));
 	intFunc = (void(**)(char)) calloc(REG_BIT_SIZE,sizeof(void(*)(char)));
 	
-    UCSRA=(0<<RXC) | (0<<TXC) | (0<<UDRE) | (0<<FE) | (0<<DOR) | (0<<UPE) | (0<<U2X) | (0<<MPCM);
-    UCSRB=(1<<RXCIE) | (1<<TXCIE) | (0<<UDRIE) | (1<<RXEN) | (1<<TXEN) | (0<<UCSZ2) | (0<<RXB8) | (0<<TXB8);
-    UCSRC=(1<<URSEL) | (0<<UMSEL) | (0<<UPM1) | (0<<UPM0) | (0<<USBS) | (1<<UCSZ1) | (1<<UCSZ0) | (0<<UCPOL);
-    UBRRH=0x00;
-    UBRRL=0x33;
+	// USART initialization
+	// Communication Parameters: 8 Data, 1 Stop, No Parity
+	// USART Receiver: On
+	// USART Transmitter: On
+	// USART Mode: Asynchronous
+	// USART Baud Rate: 9600
+	UCSRA=(0<<RXC) | (0<<TXC) | (0<<UDRE) | (0<<FE) | (0<<DOR) | (0<<UPE) | (0<<U2X) | (0<<MPCM);
+	UCSRB=(1<<RXCIE) | (1<<TXCIE) | (0<<UDRIE) | (1<<RXEN) | (1<<TXEN) | (0<<UCSZ2) | (0<<RXB8) | (0<<TXB8);
+	UCSRC=(1<<URSEL) | (0<<UMSEL) | (0<<UPM1) | (0<<UPM0) | (0<<USBS) | (1<<UCSZ1) | (1<<UCSZ0) | (0<<UCPOL);
+	UBRRH=0x00;
+	UBRRL=0x33;
+	
     for (i=0;i<REG_SIZE;i++){
         setInterrupt(i,nop);
     }	
+	
 }
 
 void setReadReg(char n,char data){
@@ -178,4 +186,8 @@ void WriteReg(unsigned char i,unsigned char data)
 		  data=0xfd;
 	syReg[i]=data;
 	pushSyncBuffer(i);
+}
+
+char ReadReg(char n){
+	return syReg[n];
 }
