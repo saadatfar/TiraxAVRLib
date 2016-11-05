@@ -30,9 +30,9 @@ void pullBuffer(); //Pull (delete) first in sync buffer
 void putchar(char c); //Put a char in TX buffer 
 void sendNextSy(); //Send first in sync buffer
 
-void nop(char x);//Do nothing!
+void nop();//Do nothing!
 
-void setInterrupt(char n,void(*f)(char)); //Initiate an interrupt
+void setInterrupt(char n,void(*f)()); //Initiate an interrupt
 
 void initSync(unsigned char size); //Initialize Sync system
 
@@ -44,9 +44,11 @@ void RunInterrupts();
 
 char ReadReg(char n);
 
-#define SetBitReg(i,n) syReg[i]=(1<<n) | syReg[i]  ;pushSyncBuffer(i);
-#define ResetBitReg(i,n) syReg[i]=(0<<n) & syReg[i] ;pushSyncBuffer(i);
-#define ReadBitReg(i,n) (syReg[i] & (1<<n))!=0
+void WriteBitReg(unsigned char reg,unsigned char b, unsigned char value);
+
+void SetBitReg(unsigned char i,unsigned char n);
+void ResetBitReg(unsigned char i,unsigned char n);
+unsigned char ReadBitReg(unsigned char i,unsigned char n);
 
 #pragma library Sync.lib
 

@@ -6,7 +6,7 @@
 unsigned char REG_SIZE; 
 unsigned char REG_BIT_SIZE;
 
-void(**intFunc)(char); //Interrupt functions variable
+void(**intFunc)(); //Interrupt functions variable
 
 unsigned char *syReg; //Registers
 unsigned char *iFlag; //Interrupts
@@ -80,13 +80,11 @@ void sendNextSy(){
     }
 }
 
-void setInterrupt(char n,void(*f)(char)){
+void setInterrupt(char n,void(*f)()){
 	intFunc[n]=f;
 }
 
-#pragma warn-
-void nop(char x){}
-#pragma warn+ 
+void nop(){}
 // Initialize ATmega32 UART register
 void initSync(unsigned char size){
     char i;
@@ -96,7 +94,7 @@ void initSync(unsigned char size){
 	
 	syReg = (unsigned char *) calloc(size,sizeof(unsigned char));
 	iFlag = (unsigned char *) calloc(REG_BIT_SIZE,sizeof(unsigned char));
-	intFunc = (void(**)(char)) calloc(REG_BIT_SIZE,sizeof(void(*)(char)));
+	intFunc = (void(**)()) calloc(REG_BIT_SIZE,sizeof(void(*)()));
 	
 	// USART initialization
 	// Communication Parameters: 8 Data, 1 Stop, No Parity
@@ -130,7 +128,7 @@ void RunInterrupts(){
 			for (j=0;j<=7;j++){
 				n=i*8+j;
 				if (READI(n)){
-					intFunc[n](syReg[n]);
+					intFunc[n]();
 					RESETI(n);
 					return;
 				}
@@ -190,4 +188,23 @@ void WriteReg(unsigned char i,unsigned char data)
 
 char ReadReg(char n){
 	return syReg[n];
+}
+
+void WriteBitReg(unsigned char reg,unsigned char b, unsigned char value){
+	if (value==0){
+		ResetBitReg(reg,b);
+	}else{
+		SetBitReg(reg,b);
+	}
+}
+void SetBitReg(unsigned char i,unsigned char n){
+	syReg[i]=(1<<n) | syReg[i];
+	pushSyncBuffer(i);
+}
+void ResetBitReg(unsigned char i,unsigned char n){
+	syReg[i]=(0<<n) & syReg[i];
+	pushSyncBuffer(i);
+}
+unsigned char ReadBitReg(unsigned char i,unsigned char n){
+	return ((syReg[i] & (1<<n))!=0);
 }

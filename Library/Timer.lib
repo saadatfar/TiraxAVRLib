@@ -97,7 +97,11 @@ interrupt [TIM2_COMP] void timer2_comp_isr(void)
             tt[i]--;      
         }else if(tt[i]==1){
             tt[i]--;
-            tt[i]=tj[i];
+			if (tj[i]!=0){
+				tt[i]=tj[i];
+			}else{
+				resetBitCharArr(treserved,i);
+			}
             SETF(i);
         }
     }  
