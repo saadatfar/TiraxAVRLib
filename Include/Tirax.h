@@ -4,6 +4,8 @@
 #include <Timer.h>
 #include <Sync.h>
 #include <stdbool.h>
+#include <Registers.h>
+#include <Errors.h>
 
 void initTirax();
 void RunTirax();

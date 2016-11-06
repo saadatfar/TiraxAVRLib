@@ -25,3 +25,7 @@ void setBitCharArr(char* arr,unsigned int n){
 void resetBitCharArr(char* arr,unsigned int n){
 	arr[n/8]= arr[n/8] & (~(1<<(n%8)));
 }
+
+void raiseCriticalError(unsigned char e){
+	WriteReg(RMER,e);
+}
