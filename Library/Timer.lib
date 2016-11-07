@@ -49,7 +49,7 @@ unsigned char findFreeTimer(){
 			return i;
 		}
 	}
-	raiseCriticalError(ERR_T01);
+	//raiseCriticalError(ERR_T01);
 }
 
 //Run all timer functions

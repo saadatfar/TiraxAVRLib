@@ -13,6 +13,7 @@ void RunTirax();
 bool readBitCharArr(char* arr,unsigned int n);
 void setBitCharArr(char* arr,unsigned int n);
 void resetBitCharArr(char* arr,unsigned int n);
+void raiseCriticalError(unsigned char e);
 
 
 #pragma library Tirax.lib
