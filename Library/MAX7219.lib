@@ -10,13 +10,25 @@ void spi_send(unsigned char addr,char data)
 
 void max7219_init(void)
 {
+	// SPI initialization
+	// SPI Type: Master
+	// SPI Clock Rate: 500/000 kHz
+	// SPI Clock Phase: Cycle Start
+	// SPI Clock Polarity: Low
+	// SPI Data Order: MSB First
+	SPCR=(0<<SPIE) | (1<<SPE) | (0<<DORD) | (1<<MSTR) | (0<<CPOL) | (0<<CPHA) | (0<<SPR1) | (1<<SPR0);
+	SPSR=(0<<SPI2X);
+	delay_ms(100);
+	Load = 1;
+	delay_us(100);
+	Load = 0;
 	spi_send(SDR,Normal);
 	spi_send(DMR,NoDecode);
 	spi_send(IR,INTENSITY(100));
 	spi_send(SLR,DIGIT_DISPLAY(8));
 	spi_send(DMR,NoDecode);
 }
-unsigned char numbers[] = {
+char numbers[] = {
 	0b01111110, //0
 	0b00110000, //1
 	0b01101101, //2
@@ -30,7 +42,8 @@ unsigned char numbers[] = {
 	0b00000001, //-
 	0b00000000, //Blank
 }
-void max7219_rotate(unsigned char in[8],unsigned char out[8])
+
+void max7219_rotate( char in[8], char out[8])
 {
 	int i,j;
 	for(i=0;i<8;i++)
@@ -41,4 +54,17 @@ void max7219_rotate(unsigned char in[8],unsigned char out[8])
 			out(i) = out(i) + (((in(j)&(1<<i))>>i)<<j);
 		}
 	}
+}
+void max7219_display(int *in) // for Common Anode
+{
+	int i;
+	char rotatedDisp[8];
+	char disp[8];
+	for (i=0;i<8;i++)
+	{
+		disp[i] = numbers[in[i]];
+	}
+	max7219_rotate(prevDisp,disp);
+	for(i=0;i<8;i++)
+		spi_send(DR(i),rotateDisp[i]);
 }

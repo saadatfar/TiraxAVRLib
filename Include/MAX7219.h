@@ -3,7 +3,7 @@
 // General 
 #define DIGITS 8
 // Registers
-#define DR(i) i-1
+#define DR(i) i+1
 #define DMR 0x09
 #define IR 0x0a
 #define SLR 0x0b
@@ -20,6 +20,14 @@
 #define DIGIT_DISPLAY(i) i
 
 #pragma used+
+
+void spi_send(unsigned char addr,char data);
+
+void max7219_init(void);
+
+max7219_rotate( char in[8], char out[8]);
+
+void max7219_display(int *in); // for Common Anode
 
 #pragma used-
 

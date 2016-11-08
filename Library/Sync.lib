@@ -8,6 +8,8 @@ unsigned char REG_BIT_SIZE;
 
 void(**intFunc)(); //Interrupt functions variable
 
+void (*recFunc)();
+
 unsigned char *syReg; //Registers
 unsigned char *iFlag; //Interrupts
 
@@ -23,7 +25,7 @@ unsigned char tx_wr_index=0,tx_rd_index=0,tx_counter=0;
 unsigned char syw_chk; //Last sent parity byte
 
 //Receiver state machine variables 
-unsigned char read_reg_step=0,read_i;
+unsigned char read_reg_step=0,read_i,read_d;
 unsigned char read_ack_step=0;
 
 
@@ -76,6 +78,7 @@ void sendNextSy(){
         putchar(0xff);
         putchar(i);
         putchar(data);
+		putchar(syw_chk);
         StartTimer(TRANS_RESEND_TIMER,RESEND_T,sendNextSy);
     }
 }
@@ -110,7 +113,8 @@ void initSync(unsigned char size){
 	
     for (i=0;i<REG_SIZE;i++){
         setInterrupt(i,nop);
-    }	
+    }
+	setRecFunc(nop);	
 	
 }
 
@@ -139,20 +143,30 @@ void RunInterrupts(){
 
 interrupt [USART_RXC] void usart_rx_isr(void)
 {
-    char status,data;
+    unsigned char status,data;
+    unsigned char ack;
     status=UCSRA;
     data=UDR;
     if ((status & (FRAMING_ERROR | PARITY_ERROR | DATA_OVERRUN))==0)
-    {
+    {	
         if (data==READ_START){
+            PORTC.4=1;
             read_reg_step=1; 
         }else if (read_reg_step==1){
-            read_i=data;
-            read_reg_step++;  
+            PORTC.3=1;
+			read_i=data;
+			read_reg_step++;
         }else if (read_reg_step==2){
-			setReadReg(read_i,data);
-            read_reg_step=0;
-        }
+            PORTC.4=0;
+			read_d=data;
+			read_reg_step++;
+        }else if (read_reg_step==3){
+            ack=CREATE_ACK(read_i,read_d);
+			if (data==ack &&  read_i<REG_SIZE){
+				setReadReg(read_i,read_d);
+			}
+			read_reg_step=0;
+		}
         
         if (data==ACK_START){
             read_ack_step=1;
@@ -169,6 +183,8 @@ interrupt [USART_RXC] void usart_rx_isr(void)
 }
 interrupt [USART_TXC] void usart_tx_isr(void)
 {
+	recFunc();
+	
    if (tx_counter)
    {
    --tx_counter;
@@ -207,4 +223,7 @@ void ResetBitReg(unsigned char i,unsigned char n){
 }
 unsigned char ReadBitReg(unsigned char i,unsigned char n){
 	return ((syReg[i] & (1<<n))!=0);
+}
+void setRecFunc(void (*f)()){
+	recFunc=f;
 }

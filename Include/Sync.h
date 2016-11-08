@@ -50,6 +50,8 @@ void SetBitReg(unsigned char i,unsigned char n);
 void ResetBitReg(unsigned char i,unsigned char n);
 unsigned char ReadBitReg(unsigned char i,unsigned char n);
 
+void setRecFunc(void (*f)());
+
 #pragma library Sync.lib
 
 #endif
