@@ -109,7 +109,7 @@ void initSync(unsigned char size){
 	UCSRB=(1<<RXCIE) | (1<<TXCIE) | (0<<UDRIE) | (1<<RXEN) | (1<<TXEN) | (0<<UCSZ2) | (0<<RXB8) | (0<<TXB8);
 	UCSRC=(1<<URSEL) | (0<<UMSEL) | (0<<UPM1) | (0<<UPM0) | (0<<USBS) | (1<<UCSZ1) | (1<<UCSZ0) | (0<<UCPOL);
 	UBRRH=0x00;
-	UBRRL=0x33;
+	UBRRL=0x67;
 	
     for (i=0;i<REG_SIZE;i++){
         setInterrupt(i,nop);
@@ -150,14 +150,11 @@ interrupt [USART_RXC] void usart_rx_isr(void)
     if ((status & (FRAMING_ERROR | PARITY_ERROR | DATA_OVERRUN))==0)
     {	
         if (data==READ_START){
-            PORTC.4=1;
             read_reg_step=1; 
         }else if (read_reg_step==1){
-            PORTC.3=1;
 			read_i=data;
 			read_reg_step++;
         }else if (read_reg_step==2){
-            PORTC.4=0;
 			read_d=data;
 			read_reg_step++;
         }else if (read_reg_step==3){

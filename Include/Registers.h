@@ -29,3 +29,5 @@
 #define RBLF 1
 
 #define CNT_PULSE 0
+
+#define CAVITATION 5

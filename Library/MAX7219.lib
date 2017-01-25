@@ -1,4 +1,7 @@
 
+#include <delay.h>
+#include <spi.h>
+
 void spi_send(unsigned char addr,char data)
 {
 	  spi(addr);

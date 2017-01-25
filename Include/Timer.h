@@ -1,10 +1,6 @@
 #ifndef _TIRAX_TIMER_INCLUDED_
 #define _TIRAX_TIMER_INCLUDED_
 
-#if  _MCU_CLOCK_FREQUENCY_!=8000000
-    #error Timer Framework only works at 8 MHZ      
-#endif
-
 #define TRANS_RESEND_TIMER 0
 
 #define SETF(i)     tflag[i/8]= tflag[i/8] | (1<<(i%8))

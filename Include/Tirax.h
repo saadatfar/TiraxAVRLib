@@ -1,6 +1,10 @@
 #ifndef _TIRAX_LIB_INCLUDED_
 #define _TIRAX_LIB_INCLUDED_
 
+#if  _MCU_CLOCK_FREQUENCY_!=16000000
+    #error Timer Framework only works at 16 MHZ      
+#endif
+
 #include <Timer.h>
 #include <Sync.h>
 #include <stdbool.h>
