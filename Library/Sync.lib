@@ -1,7 +1,15 @@
 #include <Timer.h>
 #include <Sync.h>
 #include <stdlib.h>
+
+#ifdef M32
 #include <mega32a.h>
+#endif
+#ifdef M64
+#include <mega64a.h>
+#endif
+
+#include <Tirax.h>
 
 unsigned char REG_SIZE; 
 unsigned char REG_BIT_SIZE;
@@ -99,22 +107,42 @@ void initSync(unsigned char size){
 	iFlag = (unsigned char *) calloc(REG_BIT_SIZE,sizeof(unsigned char));
 	intFunc = (void(**)()) calloc(REG_BIT_SIZE,sizeof(void(*)()));
 	
-	// USART initialization
-	// Communication Parameters: 8 Data, 1 Stop, No Parity
-	// USART Receiver: On
-	// USART Transmitter: On
-	// USART Mode: Asynchronous
-	// USART Baud Rate: 9600
-	UCSRA=(0<<RXC) | (0<<TXC) | (0<<UDRE) | (0<<FE) | (0<<DOR) | (0<<UPE) | (0<<U2X) | (0<<MPCM);
-	UCSRB=(1<<RXCIE) | (1<<TXCIE) | (0<<UDRIE) | (1<<RXEN) | (1<<TXEN) | (0<<UCSZ2) | (0<<RXB8) | (0<<TXB8);
-	UCSRC=(1<<URSEL) | (0<<UMSEL) | (0<<UPM1) | (0<<UPM0) | (0<<USBS) | (1<<UCSZ1) | (1<<UCSZ0) | (0<<UCPOL);
-	UBRRH=0x00;
-	UBRRL=0x67;
+	#ifdef M32
+		// USART initialization
+		// Communication Parameters: 8 Data, 1 Stop, No Parity
+		// USART Receiver: On
+		// USART Transmitter: On
+		// USART Mode: Asynchronous
+		// USART Baud Rate: 9600
+		UCSRA=(0<<RXC) | (0<<TXC) | (0<<UDRE) | (0<<FE) | (0<<DOR) | (0<<UPE) | (0<<U2X) | (0<<MPCM);
+		UCSRB=(1<<RXCIE) | (1<<TXCIE) | (0<<UDRIE) | (1<<RXEN) | (1<<TXEN) | (0<<UCSZ2) | (0<<RXB8) | (0<<TXB8);
+		UCSRC=(1<<URSEL) | (0<<UMSEL) | (0<<UPM1) | (0<<UPM0) | (0<<USBS) | (1<<UCSZ1) | (1<<UCSZ0) | (0<<UCPOL);
+		UBRRH=0x00;
+		UBRRL=0x67;
+	#endif
+	
+	#ifdef M64
+		
+		// USART1 initialization
+		// Communication Parameters: 8 Data, 1 Stop, No Parity
+		// USART1 Receiver: On
+		// USART1 Transmitter: On
+		// USART1 Mode: Asynchronous
+		// USART1 Baud Rate: 9600
+		UCSR1A=(0<<RXC1) | (0<<TXC1) | (0<<UDRE1) | (0<<FE1) | (0<<DOR1) | (0<<UPE1) | (0<<U2X1) | (0<<MPCM1);
+		UCSR1B=(1<<RXCIE1) | (1<<TXCIE1) | (0<<UDRIE1) | (1<<RXEN1) | (1<<TXEN1) | (0<<UCSZ12) | (0<<RXB81) | (0<<TXB81);
+		UCSR1C=(0<<UMSEL1) | (0<<UPM11) | (0<<UPM10) | (0<<USBS1) | (1<<UCSZ11) | (1<<UCSZ10) | (0<<UCPOL1);
+		UBRR1H=0x00;
+		UBRR1L=0x67;
+		
+	#endif
 	
     for (i=0;i<REG_SIZE;i++){
         setInterrupt(i,nop);
     }
-	setRecFunc(nop);	
+	
+	setRecFunc(nop);
+		
 	
 }
 

@@ -1,13 +1,33 @@
 #include <Tirax.h>
 #include <Timer.h>
 #include <Sync.h>
-#include <mega32.h>
+#ifdef M32
+#include <mega32a.h>
+#endif
+#ifdef M64
+#include <mega64a.h>
+#endif
 #include <stdbool.h>
 
 void initTirax(){
 	#asm("sei");
+	
+	#ifdef M32
 	// Watchdog Timer initialization: OSC/1024k: 1Sec
 	WDTCR=(0<<WDTOE) | (1<<WDE) | (1<<WDP2) | (1<<WDP1) | (0<<WDP0);
+	#endif
+	
+	#ifdef M64
+	// Watchdog Timer initialization
+	// Watchdog Timer Prescaler: OSC/1024k
+	#pragma optsize-
+	/* WDTCR=(1<<WDCE) | (1<<WDE) | (1<<WDP2) | (1<<WDP1) | (0<<WDP0);
+	WDTCR=(0<<WDCE) | (1<<WDE) | (1<<WDP2) | (1<<WDP1) | (0<<WDP0); */
+	#ifdef _OPTIMIZE_SIZE_
+	#pragma optsize+
+	#endif
+	#endif
+
 }
 
 void RunTirax(){

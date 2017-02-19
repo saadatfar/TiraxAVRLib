@@ -1,6 +1,11 @@
-#include <mega32a.h>
-#include <Timer.h>
 #include <Tirax.h>
+#include <Timer.h>
+#ifdef M32
+#include <mega32a.h>
+#endif
+#ifdef M64
+#include <mega64a.h>
+#endif
 #include <stdlib.h>
 
 unsigned char TimerN=0;
@@ -75,19 +80,35 @@ void initTimer(unsigned char size){
 	treserved = (char *) calloc(TimerBitSize,sizeof(char));
 	tfunc = (void(**)()) calloc(size,sizeof( void(*)() ));
 	
-    // Timer/Counter 2 initialization
-	// Clock source: System Clock
-	// Clock value: 250.000 kHz
-	// Mode: CTC top=OCR2A
-	// OC2 output: Disconnected
-	// Timer Period: 1 ms
-	ASSR=0<<AS2;
-	TCCR2=(0<<PWM2) | (0<<COM21) | (0<<COM20) | (1<<CTC2) | (1<<CS22) | (0<<CS21) | (0<<CS20);
-	TCNT2=0x00;
-	OCR2=0xF9;
+	#ifdef M32
+		// Timer/Counter 2 initialization
+		// Clock source: System Clock
+		// Clock value: 250.000 kHz
+		// Mode: CTC top=OCR2A
+		// OC2 output: Disconnected
+		// Timer Period: 1 ms
+		ASSR=0<<AS2;
+		TCCR2=(0<<PWM2) | (0<<COM21) | (0<<COM20) | (1<<CTC2) | (1<<CS22) | (0<<CS21) | (0<<CS20);
+		TCNT2=0x00;
+		OCR2=0xF9;
 		
+		TIMSK=TIMSK | (1<<OCIE2);
+	#endif
+	
+	#ifdef M64
+		// Timer/Counter 2 initialization
+		// Clock source: System Clock
+		// Clock value: 250.000 kHz
+		// Mode: CTC top=OCR2A
+		// OC2 output: Disconnected
+		// Timer Period: 1 ms
+		TCCR2=(0<<WGM20) | (0<<COM21) | (0<<COM20) | (1<<WGM21) | (0<<CS22) | (1<<CS21) | (1<<CS20);
+		TCNT2=0x00;
+		OCR2=0xF9;
+		
+		TIMSK=TIMSK | (1<<OCIE2);
 
-    TIMSK=TIMSK | (1<<OCIE2);
+	#endif
 }
 
 interrupt [TIM2_COMP] void timer2_comp_isr(void)

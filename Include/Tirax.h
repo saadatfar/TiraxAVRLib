@@ -5,6 +5,21 @@
     #error Timer Framework only works at 16 MHZ      
 #endif
 
+#ifdef _CHIP_ATMEGA32A_
+	#define VALID_CHIP
+	#define M32
+#endif
+
+
+#ifdef _CHIP_ATMEGA64A_
+	#define VALID_CHIP
+	#define M64
+#endif
+
+#ifndef VALID_CHIP
+	#error Unsupported Chip.
+#endif
+
 #include <Timer.h>
 #include <Sync.h>
 #include <stdbool.h>
