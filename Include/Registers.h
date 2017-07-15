@@ -4,6 +4,7 @@
 #define RMST 10
 #define RUST 11
 #define RMKY 12
+#define RUKY 13
 
 #define RTYP0 20
 #define RTYP1 21
@@ -13,6 +14,12 @@
 #define RPLEN 25
 #define RSNUM 26
 #define RVCLV 27
+#define RLPGO 28
+#define RLPGF 29
+#define RDPTH 30
+#define RFTIME 31
+#define RFDLY 32
+#define RFRSHT 33
 
 #define RCRN1 40
 #define RCRN2 41
@@ -27,7 +34,10 @@
 
 #define RBHF 0
 #define RBLF 1
+#define FRAC 3
 
 #define CNT_PULSE 0
 
 #define CAVITATION 5
+
+#define RUKY_CAL 0
