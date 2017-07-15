@@ -69,6 +69,8 @@ unsigned char ReadBitReg(unsigned char i,unsigned char n);
 
 void setRecFunc(void (*f)());
 
+unsigned char GetSyncQ();
+
 #pragma library Sync.lib
 
 #endif

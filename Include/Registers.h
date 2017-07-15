@@ -1,5 +1,6 @@
 #define RMER 0
 #define RUER 1
+#define MTB1 2
 
 #define RMST 10
 #define RUST 11
@@ -21,6 +22,8 @@
 #define RTMP2 51
 #define RTMP3 52
 
+
+#define SPW 0
 
 #define RBKEY0 0
 #define RBKEY1 1
