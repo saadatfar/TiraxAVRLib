@@ -252,3 +252,6 @@ unsigned char ReadBitReg(unsigned char i,unsigned char n){
 void setRecFunc(void (*f)()){
 	recFunc=f;
 }
+unsigned char GetSyncQ(){
+	return syw_counter;
+}
