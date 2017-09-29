@@ -1,6 +1,8 @@
 #define RMER 0
 #define RUER 1
 #define MTB1 2
+#define MTTI 3
+#define MVE  4
 
 #define RMST 10
 #define RUST 11
